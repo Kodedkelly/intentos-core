@@ -3,94 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IntentOS — Developer HMI Console Mockup</title>
+    <title>IntentOS — Developer HMI Console & Stream Monitor</title>
     <script src="https://tailwindcss.com"></script>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans min-h-screen p-6">
-    <div class="max-w-6xl mx-auto">
-        <!-- Header -->
-        <header class="border-b border-slate-800 pb-4 mb-6 flex justify-between items-center">
+<body class="bg-[#0F172A] text-slate-100 font-sans min-h-screen p-6 select-none selection:bg-blue-500/30">
+    <div class="max-w-7xl mx-auto space-y-6">
+        
+        <!-- Enterprise Header Banner Component -->
+        <header class="bg-[#1E293B] border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-xl shadow-black/20">
             <div>
-                <h1 class="text-2xl font-bold text-white tracking-tight">IntentOS Console</h1>
-                <p class="text-xs text-blue-500">Universal Predictive HMI Infrastructure Layer</p>
+                <div class="flex items-center gap-3">
+                    <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">IntentOS Control Center</span>
+                    <span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[10px] font-mono px-2 py-0.5 rounded-full font-bold">V1.0.0 CORE</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-1 font-medium">Production-Grade Infrastructure Architecture Layer for Multimodal Human Intent Recognition</p>
             </div>
-            <div class="flex items-center gap-2">
-                <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="text-xs text-slate-400 font-mono">BROADCAST_NODE: OK (8889)</span>
+            <div class="flex items-center gap-6 bg-slate-900/50 border border-slate-800/80 px-4 py-2.5 rounded-xl">
+                <div class="flex items-center gap-2">
+                    <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-xs text-slate-300 font-mono font-bold">INGESTION: 8888</span>
+                </div>
+                <div class="h-4 w-px bg-slate-800"></div>
+                <div class="flex items-center gap-2">
+                    <span class="h-2 w-2 rounded-full bg-blue-500 animate-pulse"></span>
+                    <span class="text-xs text-slate-300 font-mono font-bold">BROADCAST: 8889</span>
+                </div>
             </div>
         </header>
 
-        <!-- Main Workspace Grid -->
+        <!-- Primary Application Grid Architecture -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Left Panel: Adaptive Calibration Controls -->
-            <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-xl">
-                <h2 class="text-md font-semibold text-slate-200 mb-4 border-b border-slate-700 pb-2">Adaptive Calibration Interface</h2>
-                <p class="text-xs text-slate-400 mb-4">Record biophysical anomalies to scale the machine learning activation weights tailored to specific user metrics.</p>
-                
-                <div class="space-y-3">
-                    <button onclick="mockCalibrate('REST')" class="w-full bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold py-2.5 px-4 rounded-lg transition-colors border border-slate-600">
-                        Step 1: Capture Rest Noise Floor
-                    </button>
-                    <button onclick="mockCalibrate('PEAK')" class="w-full bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold py-2.5 px-4 rounded-lg transition-colors border border-slate-600">
-                        Step 2: Capture Max Exertion
-                    </button>
-                    <button onclick="mockCalibrate('FINALIZE')" class="w-full bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold py-2.5 px-4 rounded-lg transition-colors shadow-lg shadow-blue-900/30">
-                        Step 3: Compile & Inject ML Profile
-                    </button>
+            
+            <!-- Left Grid Pane: Adaptive Hardware Calibration Dashboard -->
+            <div class="bg-[#1E293B] border border-slate-800 rounded-2xl p-5 flex flex-col justify-between shadow-xl shadow-black/20">
+                <div>
+                    <h2 class="text-sm font-bold text-slate-200 uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <span>⚙️</span> Biophysical User Calibration
+                    </h2>
+                    <p class="text-xs text-slate-400 leading-relaxed mb-5">Record biological baselines dynamically over live telemetry metrics to calculate customized ML threshold variables tailored to specific muscle or neural arrays.</p>
+                    
+                    <div class="space-y-2.5">
+                        <button onclick="executeUiCalibration('REST')" class="w-full text-left bg-slate-900 hover:bg-slate-800/80 text-slate-300 hover:text-white text-xs font-semibold py-3 px-4 rounded-xl transition-all border border-slate-800 hover:border-slate-700 flex justify-between items-center group">
+                            <span>Step 1: Capture Ambient Noise Floor</span>
+                            <span class="text-slate-500 group-hover:text-blue-400 font-mono font-bold">REST ➔</span>
+                        </button>
+                        <button onclick="executeUiCalibration('PEAK')" class="w-full text-left bg-slate-900 hover:bg-slate-800/80 text-slate-300 hover:text-white text-xs font-semibold py-3 px-4 rounded-xl transition-all border border-slate-800 hover:border-slate-700 flex justify-between items-center group">
+                            <span>Step 2: Capture Max Muscle Exertion</span>
+                            <span class="text-slate-500 group-hover:text-blue-400 font-mono font-bold">PEAK ➔</span>
+                        </button>
+                        <button onclick="executeUiCalibration('FINALIZE')" class="w-full bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-3 px-4 rounded-xl transition-all shadow-lg shadow-blue-600/10 hover:shadow-blue-500/20 active:scale-[0.99]">
+                            Step 3: Compile & Inject Adaptive Profile
+                        </button>
+                    </div>
                 </div>
 
-                <div class="mt-5 p-3.5 bg-slate-900/50 rounded-lg border border-slate-700/50">
-                    <div class="flex justify-between text-xs mb-1.5"><span class="text-slate-400">User Noise Floor:</span><span id="ui-noise" class="font-mono text-slate-300">0.082 RMS</span></div>
-                    <div class="flex justify-between text-xs"><span class="text-slate-400">ML Trigger Line:</span><span id="ui-trigger" class="font-mono text-emerald-400 font-bold">0.421 RMS</span></div>
+                <!-- Active Machine Learning Weights Status Metrics -->
+                <div class="mt-6 p-4 bg-slate-950/40 rounded-xl border border-slate-900 space-y-2.5">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-400 font-medium">Calculated User Noise Floor:</span>
+                        <span id="noise-metric" class="font-mono text-slate-300 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">0.054 RMS</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-400 font-medium">Adaptive ML Trigger Line:</span>
+                        <span id="trigger-metric" class="font-mono text-emerald-400 font-bold bg-slate-900 px-2 py-0.5 rounded border border-slate-800/50 shadow-sm shadow-emerald-500/5">0.650 RMS</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Middle/Right Panels: Telemetry Tracking Activity Feed -->
-            <div class="lg:col-span-2 bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-xl flex flex-col h-[400px]">
-                <h2 class="text-md font-semibold text-slate-200 mb-3 border-b border-slate-700 pb-2">Real-Time Application Feed</h2>
-                <div id="log-container" class="flex-1 overflow-y-auto space-y-2 font-mono text-xs p-3 bg-slate-950 rounded-lg border border-slate-900">
-                    <div class="text-slate-500">// Stream pipeline listening for incoming broad-casts...</div>
+            <!-- Right Grid Panes: Real-Time Multimodal Telemetry Interface Logs -->
+            <div class="lg:col-span-2 bg-[#1E293B] border border-slate-800 rounded-2xl p-5 shadow-xl shadow-black/20 flex flex-col h-[450px]">
+                <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+                    <h2 class="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                        <span>📥</span> Network Stream Telemetry
+                    </h2>
+                    <span class="text-[10px] font-mono text-slate-500 bg-slate-950 px-2 py-0.5 rounded border border-slate-900 font-semibold">STREAM_RATE: 20Hz</span>
+                </div>
+                
+                <!-- Streaming Terminal Console Box -->
+                <div id="live-console-feed" class="flex-1 overflow-y-auto space-y-2.5 font-mono text-xs p-4 bg-slate-950 rounded-xl border border-slate-900 shadow-inner scrollbar-thin">
+                    <div class="text-slate-600">// IntentOS Core Ingestion Active. Dynamic Socket Inferences Output Pipeline Open...</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- UI Mockup Logic Script -->
+    <!-- Live Mockup Visual Execution Script Engine Layer -->
     <script>
-        const logBox = document.getElementById("log-container");
+        const consoleFeed = document.getElementById("live-console-feed");
         
-        function mockCalibrate(phase) {
-            const div = document.createElement("div");
-            div.className = "p-2 bg-blue-950/30 border-l-2 border-blue-500 text-blue-300 mb-1";
+        function executeUiCalibration(phase) {
+            const row = document.createElement("div");
+            row.className = "p-3 bg-blue-950/20 border-l-4 border-blue-500 text-blue-300 rounded-r-lg font-bold mb-1 shadow-sm transition-all";
             
-            if(phase === 'REST') {
-                div.innerHTML = `⏳ [SYSTEM PROFILE] Compiling rest state frames over raw voltage baselines...`;
-            } else if(phase === 'PEAK') {
-                div.innerHTML = `⏳ [SYSTEM PROFILE] Tracking peak muscle contraction metrics across dynamic arrays...`;
+            if (phase === 'REST') {
+                row.innerHTML = `⏳ [CONTROL SENT] Ingesting background baseline metrics to clear ambient channel noise floors...`;
+            } else if (phase === 'PEAK') {
+                row.innerHTML = `⏳ [CONTROL SENT] Tracking peak biometric neural-burst spikes over dynamic arrays...`;
             } else {
-                div.innerHTML = `✅ [SYSTEM PROFILE] Calibration complete! Injected new weights: EMG=0.342 into server core.`;
-                document.getElementById("ui-noise").innerText = "0.041 RMS";
-                document.getElementById("ui-trigger").innerText = "0.342 RMS";
+                row.innerHTML = `🚀 [INFRASTRUCTURE UPDATE] Adaptive user profiling complete! Updated network model activation trigger down to 0.485 RMS.`;
+                document.getElementById("noise-metric").innerText = "0.038 RMS";
+                document.getElementById("trigger-metric").innerText = "0.485 RMS";
+                document.getElementById("trigger-metric").className = "font-mono text-cyan-400 font-bold bg-slate-900 px-2 py-0.5 rounded border border-slate-800";
             }
-            logBox.appendChild(div);
-            logBox.scrollTop = logBox.scrollHeight;
+            consoleFeed.appendChild(row);
+            consoleFeed.scrollTop = consoleFeed.scrollHeight;
         }
 
-        // Simulating scrolling telemetry feeds
+        // Generate automated streaming human interface frames mimicking physical hardware clients
         setInterval(() => {
-            const tokens = ["PRIMARY_SELECT", "SYSTEM_HEARTBEAT_BOOST"];
-            const selectedToken = tokens[Math.floor(Math.random() * tokens.length)];
-            const conf = (85 + Math.random() * 14).toFixed(1);
-            const lead = selectedToken === "PRIMARY_SELECT" ? "45.0" : "65.0";
-
-            const logRow = document.createElement("div");
-            logRow.className = "p-2 bg-slate-900/80 rounded border border-slate-800 text-slate-300";
-            logRow.innerHTML = `📥 <span class="text-blue-400">Captured Intent:</span> <span class="text-emerald-400 font-bold">${selectedToken}</span> | <span class="text-slate-400">Match:</span> ${conf}% | <span class="text-slate-500">Lead Buffer:</span> -${lead}ms`;
+            const peripheralIds = ["intentos_neuro_wristband", "intentos_spatial_gaze_cam"];
+            const actions = ["PRIMARY_SELECT", "SYSTEM_HEARTBEAT_BOOST"];
             
-            logBox.appendChild(logRow);
-            if(logBox.children.length > 10) logBox.children[0].remove();
-            logBox.scrollTop = logBox.scrollHeight;
-        }, 1500);
-    </script>
-</body>
-</html>
+            const selectedPeripheral = peripheralIds[Math.floor(Math.random() * peripheralIds.length)];
+            const selectedAction = actions[Math.floor(Math.random() * actions.length)];
+            
+            const randomConfidence = (89.5 + Math.random() * 9.8).toFixed(2);
+            const predictiveLead = selectedAction === "PRIMARY_SELECT" ? "45.0" : "65.0";
+
+            const logBlock = document.createElement("div");
+            logBlock.className = "p-3 bg-slate-900/60 rounded-xl border border-slate-800 text-slate-300 hover:border-slate-700 transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-2";
+            logBlock.innerHTML = `
+                <div class="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4">
+                    <span class="text-slate-500 font-bold">[${selectedPeripheral}]</span>
+                    <div>Captured Intent: <span class="text-emerald-400 font-extrabold font-mono">${selectedAction}</span></div>
+                </div>
+                <div class="flex gap-4 text-[11px] font-semibold">
+                    <span class="text-slate-400">Match: <span class="text-white">${randomConfidence}%</span></span>
+                    <span class="text-indigo-400">Lead Time: <span class="bg-indigo-500/10 px-1.5 py-0.5 rounded font-bold">-${predictiveLead}ms</span></span>
+                </div>
+            `;
+            
+            consoleFeed.appendChild(logBlock);
+            
+            // Garbage collection: maintain running stack memory performance rules
+            if (consoleFeed.children.length > 25) {
+                consoleFeed.removeChild(consoleFeed.children[1]); }
+consoleFeed.scrollTop = consoleFeed.scrollHeight;
+}, 1200);
+
+
+
