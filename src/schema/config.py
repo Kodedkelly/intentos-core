@@ -2,9 +2,9 @@ import os
 
 class IntentOSConfig:
     """
-    The Single Source of Truth Configuration Blueprint for IntentOS.
-    Consolidates network layers, data constraints, ML weights, and pipeline paths
-    to ensure predictable enterprise infrastructure operations.
+    The Single Source of Truth Configuration Blueprint for IntentOS (AAC Wedge Edition).
+    Consolidates network parameters, assistive thresholds, and pipeline paths
+    to protect multi-vendor accessibility interface software loops.
     """
     # Network Layer Settings
     GATEWAY_HOST: str = os.getenv("INTENTOS_HOST", "127.0.0.1")
@@ -15,12 +15,13 @@ class IntentOSConfig:
     BUFFER_MAX_LEN: int = int(os.getenv("INTENTOS_BUFFER_MAX_LEN", 1000))
     
     # Digital Signal Processing Properties
-    DSP_SLIDING_WINDOW_SIZE: int = int(os.getenv("INTENTOS_DSP_WINDOW", 10))
+    DSP_SLIDING_WINDOW_SIZE: int = int(os.getenv("INTENTOS_DSP_WINDOW", 15)) # Deep window for noise reduction
     
-    # Core Machine Learning Classifications
-    DEFAULT_EMG_ACTIVATION_THRESHOLD: float = float(os.getenv("INTENTOS_EMG_THRESH", 0.65))
-    DEFAULT_EEG_ACTIVATION_THRESHOLD: float = float(os.getenv("INTENTOS_EEG_THRESH", 0.70))
-    AI_CONFIDENCE_PASS_FLOOR: float = float(os.getenv("INTENTOS_CONF_FLOOR", 0.85))
+    # Assistive HMI Intent Mapping Thresholds (Safety Critical Constraints)
+    # Higher confidence requirements filter out spastic tremors and false clicks
+    DEFAULT_EYE_GAZE_ACTIVATION_THRESHOLD: float = float(os.getenv("INTENTOS_GAZE_THRESH", 0.70))
+    DEFAULT_SWITCH_ACTIVATION_THRESHOLD: float = float(os.getenv("INTENTOS_SWITCH_THRESH", 0.60))
+    AI_CONFIDENCE_PASS_FLOOR: float = float(os.getenv("INTENTOS_CONF_FLOOR", 0.90)) # Strict 90% floor
     
     # Cold Storage Properties
     DATA_MOAT_DIR: str = os.getenv("INTENTOS_STORAGE_DIR", "data_moat")
@@ -28,13 +29,11 @@ class IntentOSConfig:
 
     @classmethod
     def print_runtime_profile(cls) -> None:
-        """Outputs an institutional diagnostic breakdown of active engine configurations."""
-        print("--- IntentOS Active System Runtime Configuration Profile ---")
-        print(f"  ├─ Network Target      : {cls.GATEWAY_HOST}:{cls.GATEWAY_PORT}")
-        print(f"  ├─ Alignment Constraint: {cls.TIME_SYNC_WINDOW_US / 1000} ms Max Drift")
-        print(f"  ├─ DSP Processing Depth: Rolling {cls.DSP_SLIDING_WINDOW_SIZE} Sample Frames")
-        print(f"  ├─ Edge ML Sensitivity : EMG={cls.DEFAULT_EMG_ACTIVATION_THRESHOLD} | EEG={cls.DEFAULT_EEG_ACTIVATION_THRESHOLD}")
-        print(f"  └─ Cold Ledger Directory: {cls.DATA_MOAT_DIR}/")
-
-if __name__ == "__main__":
-    IntentOSConfig.print_runtime_profile()
+        """Outputs an institutional diagnostic breakdown of active assistive configurations."""
+        print("=========================================================")
+        print("     INTENTOS CORE ACCESSIBILITY ACC DESIGN MODULE       ")
+        print("=========================================================")
+        print(f"  ├─ Active Gateway Network : {cls.GATEWAY_HOST}:{cls.GATEWAY_PORT}")
+        print(f"  ├─ Temporal Sync Matrix   : Rolling {cls.TIME_SYNC_WINDOW_US / 1000} ms Max Drift")
+        print(f"  ├─ Tremor Filtering Depth : Sliding {cls.DSP_SLIDING_WINDOW_SIZE} Sample Buffer")
+        print(f"  └─ Safety Confidence Floor: Strict {cls.AI_CONFIDENCE_PASS_FLOOR * 100}% Verification Gate")
