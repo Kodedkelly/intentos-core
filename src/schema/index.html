@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntentOS — Developer HMI Console Mockup</title>
+    <script src="https://tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen p-6">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <header class="border-b border-slate-800 pb-4 mb-6 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-white tracking-tight">IntentOS Console</h1>
+                <p class="text-xs text-blue-500">Universal Predictive HMI Infrastructure Layer</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-xs text-slate-400 font-mono">BROADCAST_NODE: OK (8889)</span>
+            </div>
+        </header>
+
+        <!-- Main Workspace Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Left Panel: Adaptive Calibration Controls -->
+            <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-xl">
+                <h2 class="text-md font-semibold text-slate-200 mb-4 border-b border-slate-700 pb-2">Adaptive Calibration Interface</h2>
+                <p class="text-xs text-slate-400 mb-4">Record biophysical anomalies to scale the machine learning activation weights tailored to specific user metrics.</p>
+                
+                <div class="space-y-3">
+                    <button onclick="mockCalibrate('REST')" class="w-full bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold py-2.5 px-4 rounded-lg transition-colors border border-slate-600">
+                        Step 1: Capture Rest Noise Floor
+                    </button>
+                    <button onclick="mockCalibrate('PEAK')" class="w-full bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold py-2.5 px-4 rounded-lg transition-colors border border-slate-600">
+                        Step 2: Capture Max Exertion
+                    </button>
+                    <button onclick="mockCalibrate('FINALIZE')" class="w-full bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold py-2.5 px-4 rounded-lg transition-colors shadow-lg shadow-blue-900/30">
+                        Step 3: Compile & Inject ML Profile
+                    </button>
+                </div>
+
+                <div class="mt-5 p-3.5 bg-slate-900/50 rounded-lg border border-slate-700/50">
+                    <div class="flex justify-between text-xs mb-1.5"><span class="text-slate-400">User Noise Floor:</span><span id="ui-noise" class="font-mono text-slate-300">0.082 RMS</span></div>
+                    <div class="flex justify-between text-xs"><span class="text-slate-400">ML Trigger Line:</span><span id="ui-trigger" class="font-mono text-emerald-400 font-bold">0.421 RMS</span></div>
+                </div>
+            </div>
+
+            <!-- Middle/Right Panels: Telemetry Tracking Activity Feed -->
+            <div class="lg:col-span-2 bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-xl flex flex-col h-[400px]">
+                <h2 class="text-md font-semibold text-slate-200 mb-3 border-b border-slate-700 pb-2">Real-Time Application Feed</h2>
+                <div id="log-container" class="flex-1 overflow-y-auto space-y-2 font-mono text-xs p-3 bg-slate-950 rounded-lg border border-slate-900">
+                    <div class="text-slate-500">// Stream pipeline listening for incoming broad-casts...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- UI Mockup Logic Script -->
+    <script>
+        const logBox = document.getElementById("log-container");
+        
+        function mockCalibrate(phase) {
+            const div = document.createElement("div");
+            div.className = "p-2 bg-blue-950/30 border-l-2 border-blue-500 text-blue-300 mb-1";
+            
+            if(phase === 'REST') {
+                div.innerHTML = `⏳ [SYSTEM PROFILE] Compiling rest state frames over raw voltage baselines...`;
+            } else if(phase === 'PEAK') {
+                div.innerHTML = `⏳ [SYSTEM PROFILE] Tracking peak muscle contraction metrics across dynamic arrays...`;
+            } else {
+                div.innerHTML = `✅ [SYSTEM PROFILE] Calibration complete! Injected new weights: EMG=0.342 into server core.`;
+                document.getElementById("ui-noise").innerText = "0.041 RMS";
+                document.getElementById("ui-trigger").innerText = "0.342 RMS";
+            }
+            logBox.appendChild(div);
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        // Simulating scrolling telemetry feeds
+        setInterval(() => {
+            const tokens = ["PRIMARY_SELECT", "SYSTEM_HEARTBEAT_BOOST"];
+            const selectedToken = tokens[Math.floor(Math.random() * tokens.length)];
+            const conf = (85 + Math.random() * 14).toFixed(1);
+            const lead = selectedToken === "PRIMARY_SELECT" ? "45.0" : "65.0";
+
+            const logRow = document.createElement("div");
+            logRow.className = "p-2 bg-slate-900/80 rounded border border-slate-800 text-slate-300";
+            logRow.innerHTML = `📥 <span class="text-blue-400">Captured Intent:</span> <span class="text-emerald-400 font-bold">${selectedToken}</span> | <span class="text-slate-400">Match:</span> ${conf}% | <span class="text-slate-500">Lead Buffer:</span> -${lead}ms`;
+            
+            logBox.appendChild(logRow);
+            if(logBox.children.length > 10) logBox.children[0].remove();
+            logBox.scrollTop = logBox.scrollHeight;
+        }, 1500);
+    </script>
+</body>
+</html>

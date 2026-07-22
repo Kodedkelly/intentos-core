@@ -7,12 +7,13 @@ from dsp import HMISignalFeatureExtractor
 from classifier import HMIPredictiveClassifier
 from config import IntentOSConfig
 from broadcast import IntentOSBroadcastHub
+from calibration import HMIDeviceCalibrator
 
 class IntentOSStreamingServer:
     """
-    The High-Performance Ingestion & Inference Server for IntentOS.
-    Binds a local port to receive packed raw binary telemetry over sockets,
-    extracting features and running predictive ML inferences live on the data stream.
+    The High-Performance Ingestion, Inference & Calibration Server for IntentOS.
+    Binds network ports to handle real-time streaming telemetry, adaptive user profiling,
+    and intent broadcasting over local socket topologies.
     """
     def __init__(self, host: str = IntentOSConfig.GATEWAY_HOST, port: int = IntentOSConfig.GATEWAY_PORT):
         self.host = host
@@ -21,6 +22,7 @@ class IntentOSStreamingServer:
         self.dsp_extractor = HMISignalFeatureExtractor(window_size=IntentOSConfig.DSP_SLIDING_WINDOW_SIZE)
         self.ml_classifier = HMIPredictiveClassifier()
         self.broadcast_hub = IntentOSBroadcastHub(host="127.0.0.1", port=8889)
+        self.calibrator = HMIDeviceCalibrator()
         self.is_running = False
 
     def start(self) -> None:
@@ -56,16 +58,13 @@ class IntentOSStreamingServer:
                     if not size_header or len(size_header) < 4:
                         break
                     
-                    # FIXED: Extracting index [0] safely converts tuple parameters to pure integers
                     packet_size = struct.unpack("<I", size_header)[0]
-                    
                     packet_bytes = bytearray()
                     while len(packet_bytes) < packet_size:
                         chunk = client_socket.recv(packet_size - len(packet_bytes))
                         if not chunk:
                             break
                         packet_bytes.extend(chunk)
-                        
                     if len(packet_bytes) < packet_size:
                         break
 
@@ -82,8 +81,30 @@ class IntentOSStreamingServer:
                     cursor += vector_size
                     hardware_source_id = packet_bytes[cursor:cursor+src_len].decode('utf-8')
                     cursor += src_len
-                    sim_action_token = packet_bytes[cursor:cursor+tok_len].decode('utf-8')
+                    action_token = packet_bytes[cursor:cursor+tok_len].decode('utf-8')
 
+                    # ADAPTIVE CAPTURE HOOK: Intercept network metrics to compile personalized calibration weights
+                    if action_token in ["START_CALIBRATION_REST", "START_CALIBRATION_PEAK"]:
+                        mode = "REST" if action_token == "START_CALIBRATION_REST" else "PEAK"
+                        self.calibrator.collect_calibration_sample(raw_values, state_mode=mode)
+                        
+                        # Forward dummy confirmation state feedback onto the broadcast hub pipeline
+                        payload = UnifiedHMIPayload(hardware_source_id=hardware_source_id, modality=modality)
+                        payload.set_inferred_intent(token=f"CALIBRATING_{mode}", confidence=0.5, lead_us=0)
+                        self.broadcast_hub.broadcast_intent(payload)
+                        continue
+                    
+                    elif action_token == "FINALIZE_CALIBRATION":
+                        profile = self.calibrator.finalize_user_profile()
+                        # Dynamic threshold injection back into our running ML model weights
+                        self.ml_classifier.emg_threshold = profile["activation_trigger"]
+                        
+                        payload = UnifiedHMIPayload(hardware_source_id=hardware_source_id, modality=modality)
+                        payload.set_inferred_intent(token="CALIBRATION_COMPLETE", confidence=1.0, lead_us=0)
+                        self.broadcast_hub.broadcast_intent(payload)
+                        continue
+
+                    # Fallback to standard tracking loops if no calibration tags are running
                     features = self.dsp_extractor.push_signals(hardware_source_id, raw_values)
                     inference = self.ml_classifier.evaluate_intent(modality, features)
 
@@ -97,5 +118,5 @@ class IntentOSStreamingServer:
                     )
                     payload.dsp_features = features
                     self.sdk.process_incoming_sensor_stream(payload)
-                except Exception as e:
+                except Exception:
                     break
