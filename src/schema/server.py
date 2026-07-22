@@ -7,13 +7,13 @@ from dsp import HMISignalFeatureExtractor
 from classifier import HMIPredictiveClassifier
 from config import IntentOSConfig
 from broadcast import IntentOSBroadcastHub
-from calibration import HMIDeviceCalibrator
+from datastore import IntentOSDataStore
 
 class IntentOSStreamingServer:
     """
-    The High-Performance Ingestion, Inference & Calibration Server for IntentOS.
-    Binds network ports to handle real-time streaming telemetry, adaptive user profiling,
-    and intent broadcasting over local socket topologies.
+    The High-Performance Ingestion, Inference & Data Archiving Server for IntentOS.
+    Receives incoming hardware stream metrics, executes predictive inferences,
+    broadcasts event handles, and writes data transactions into relational data layers.
     """
     def __init__(self, host: str = IntentOSConfig.GATEWAY_HOST, port: int = IntentOSConfig.GATEWAY_PORT):
         self.host = host
@@ -22,15 +22,21 @@ class IntentOSStreamingServer:
         self.dsp_extractor = HMISignalFeatureExtractor(window_size=IntentOSConfig.DSP_SLIDING_WINDOW_SIZE)
         self.ml_classifier = HMIPredictiveClassifier()
         self.broadcast_hub = IntentOSBroadcastHub(host="127.0.0.1", port=8889)
-        self.calibrator = HMIDeviceCalibrator()
+        # Initialize the relational data engine moat system configuration
+        self.data_store = IntentOSDataStore()
         self.is_running = False
 
     def start(self) -> None:
         self.is_running = True
         self.broadcast_hub.start()
         
+        # Link SDK and Network components
         self.sdk.on_intent("PRIMARY_SELECT", self.broadcast_hub.broadcast_intent)
         self.sdk.on_intent("SYSTEM_HEARTBEAT_BOOST", self.broadcast_hub.broadcast_intent)
+        
+        # Link the Data Storage engine layer natively to preserve intent telemetry loops
+        self.sdk.on_intent("PRIMARY_SELECT", self.data_store.commit_telemetry_payload)
+        self.sdk.on_intent("SYSTEM_HEARTBEAT_BOOST", self.data_store.commit_telemetry_payload)
         
         self.server_thread = threading.Thread(target=self._listen_loop, daemon=True)
         self.server_thread.start()
@@ -57,7 +63,6 @@ class IntentOSStreamingServer:
                     size_header = client_socket.recv(4)
                     if not size_header or len(size_header) < 4:
                         break
-                    
                     packet_size = struct.unpack("<I", size_header)[0]
                     packet_bytes = bytearray()
                     while len(packet_bytes) < packet_size:
@@ -81,30 +86,8 @@ class IntentOSStreamingServer:
                     cursor += vector_size
                     hardware_source_id = packet_bytes[cursor:cursor+src_len].decode('utf-8')
                     cursor += src_len
-                    action_token = packet_bytes[cursor:cursor+tok_len].decode('utf-8')
+                    sim_action_token = packet_bytes[cursor:cursor+tok_len].decode('utf-8')
 
-                    # ADAPTIVE CAPTURE HOOK: Intercept network metrics to compile personalized calibration weights
-                    if action_token in ["START_CALIBRATION_REST", "START_CALIBRATION_PEAK"]:
-                        mode = "REST" if action_token == "START_CALIBRATION_REST" else "PEAK"
-                        self.calibrator.collect_calibration_sample(raw_values, state_mode=mode)
-                        
-                        # Forward dummy confirmation state feedback onto the broadcast hub pipeline
-                        payload = UnifiedHMIPayload(hardware_source_id=hardware_source_id, modality=modality)
-                        payload.set_inferred_intent(token=f"CALIBRATING_{mode}", confidence=0.5, lead_us=0)
-                        self.broadcast_hub.broadcast_intent(payload)
-                        continue
-                    
-                    elif action_token == "FINALIZE_CALIBRATION":
-                        profile = self.calibrator.finalize_user_profile()
-                        # Dynamic threshold injection back into our running ML model weights
-                        self.ml_classifier.emg_threshold = profile["activation_trigger"]
-                        
-                        payload = UnifiedHMIPayload(hardware_source_id=hardware_source_id, modality=modality)
-                        payload.set_inferred_intent(token="CALIBRATION_COMPLETE", confidence=1.0, lead_us=0)
-                        self.broadcast_hub.broadcast_intent(payload)
-                        continue
-
-                    # Fallback to standard tracking loops if no calibration tags are running
                     features = self.dsp_extractor.push_signals(hardware_source_id, raw_values)
                     inference = self.ml_classifier.evaluate_intent(modality, features)
 
