@@ -2,9 +2,9 @@ import os
 import sys
 import time
 
-ABS_SCHEMA_PATH = os.path.dirname(os.path.abspath(__file__))
-if ABS_SCHEMA_PATH not in sys.path:
-    sys.path.insert(0, ABS_SCHEMA_PATH)
+base_dir = os.path.dirname(os.path.abspath(__file__))
+if base_dir not in sys.path:
+    sys.path.insert(0, base_dir)
 
 from server import IntentOSStreamingServer
 from client import IntentOSStreamClient
@@ -18,9 +18,13 @@ def main():
     server = IntentOSStreamingServer(host="127.0.0.1", port=8888)
     
     def on_predicted_intent_received(event):
+        # Extract features injected by our background streaming network server
+        dsp_features = getattr(event, 'dsp_features', {"mav": 0.0, "rms": 0.0})
+        
         print(f"⚡ [ORCHESTRATOR ALERT — INTENT ROUTED SUCCESSFULLY]")
         print(f"  ├─ Origin Peripheral ID: {event.hardware_source_id}")
         print(f"  ├─ Decoded Action Token: \033[92m{event.action_token}\033[0m")
+        print(f"  ├─ Live Feature Extraction: MAV={dsp_features['mav']} | RMS={dsp_features['rms']}")
         print(f"  └─ Lead Execution Buffer: {event.pre_execution_lead_us / 1000} ms ahead of physical completion")
         print("-" * 57)
 
@@ -51,7 +55,7 @@ def main():
                 payload = simulator.generate_mock_eeg_focus(concentration_score=0.88)
             
             client.send_payload(payload)
-            time.sleep(0.1) # Controlled interval loop
+            time.sleep(0.1)
             
     except KeyboardInterrupt:
         print("\n⚠️ Keyboard Interrupt caught. Starting graceful runtime teardown protocols...")
